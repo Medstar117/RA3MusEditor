@@ -1,0 +1,84 @@
+This archive contains all the notes and files I have relavent to the PathMusic stuff in RA3:
+mus.cpp/mus.exe is a tool for pulling the individual audio pieces out of a .mus file (which can then be converted from EALayer3 to something else using existing tools)
+BasePathMusicEvent.xml, PathMusicEvents.xml, pc_pathmusicassets.xml, pc.mpf and RA3Music.h are the PathMusic related files.
+The .mus files are too large to include in this zip file, you can extract them from RA3 by opening StaticStream.big in your .big tool of choice and extracting  data\static\cdata\a70bc1d6.9f12cf33.240021e2.dca9eaab.cdata as track-mem.mus and  data\static\cdata\a70bc1d6.9f12cf33.2d97c0ca.6d02956b.cdata as track.mus
+
+These notes apply to RA3, the formats may have changed in RA3: Uprising and C&C4.
+The PathMusicTrack data (the .mus files) contains a header as follows:
+
+struct PathMusicTrackHeader {
+unsigned int magic; //magic number/hash referenced inside the PathMusicMap file
+unsigned int count; //how many audio pieces are in this file
+unsigned int unk1;
+unsigned int unk2;
+unsigned int unk3;
+unsigned int unk4;
+unsigned int unk5;
+unsigned int unk6;
+unsigned int unk7;
+unsigned int unk8;
+};
+
+Each music segment has a header as follows:
+struct PathMusicTrackSegmentHeader {
+unsigned int magic; //some sort of magic number/hash for the music segment
+unsigned int index;
+unsigned int HeaderOffset; //this gets multiplied by 0x10 to find the offset within the .mus data for the header of this music segment
+unsigned int DataOffset; //this gets multiplied by 0x80 to find the offset within the .mus data for the compressed audio data of this music segment
+unsigned int HeaderSize;
+unsigned int DataSize;
+unsigned int unk;
+}
+
+For reference, a "track" refers to a specific PathMusicTrack data piece (i.e. a .mus file) and a "track segment" refers to a piece of audio inside that track file.
+
+Here is what is known so far about the MPF files.
+They start with this header: (all the fields named "offset" are offsets within the file to other data tables)
+struct mpfheader
+{
+unsigned int magic; //always 0x50464478
+unsigned char version1; //always 5
+unsigned char version2; //always 3
+short field_6;
+int field_8;
+char field_C;
+unsigned char trackcount; //count of how many .mus files this .mpf file references
+char field_E;
+unsigned char pathmusiceventcount; //count of how many events there are in the "events table"
+short field_10;
+short field_12;
+unsigned int offsets1offset;
+unsigned int unk1offset;
+unsigned int eventdataoffsetsoffset;
+unsigned int eventdataoffset;
+unsigned int unk2offset;
+unsigned int unk3offset;
+unsigned int trackdataoffsetsoffset;
+unsigned int trackdataoffset;
+unsigned int tracksegmentsdataoffset;
+unsigned int mpfsize; //matches the size of the .mpf file
+int field_3C;
+int field_40;
+int field_44;
+};
+
+The data table pointed to by trackdataoffsetsoffset is an array of unsigned ints. These ints get multiplied by 4 and used as an offset into the file to locate the data structure for the track entry (i.e. the .mus file/PathMusicTrack data). This offset will be somewhere inside the table pointed to by the trackdataoffset pointer.
+
+The data table pointed to by trackdataoffset is an array of this structure:
+struct trackdatastr
+{
+unsigned int firstindex; //this is used to map where in the track segments table the first track segment from this .mus file is to be found.
+int unk1;
+unsigned int magic; //this matches with the magic number in the PathMusicTrackHeader structure in the .mus file.
+unsigned int endoffset; //this is the offset within the .mus file of the byte immediately after all the audio headers (the ones that define the compression type, channel count, sample rate and sample count).
+int unk2;
+};
+
+What is pointed to by the tracksegmentsdataoffset value is unknown but it appears to be entries 8 bytes in size with one for each track segment (although I may be wrong about that)
+
+The eventdataoffsetsoffset value points to a table of unsigned shorts. Its size is the same as the pathmusiceventcount value in the header. These offsets are multiplied by 4 and used as an offset into the file to locate the data matching this event. This data will be somewhere inside the table pointed to by the eventdataoffset pointer.
+
+The structure pointed to by the offsets in the eventdataoffsets table are unknown so far although it looks like they contain a flags value at offset 0x10 and at offset 0xC is a "magic" value that matches the #defines in ra3music.h except that the upper byte is masked off (so if the data being loaded is for the MenuTrack event, the hash value is 0x01B9D554 and the "magic" field in this structure will be ??B8D554 with the ?? being some other value that we dont know the purpose of yet)
+
+The data pointed to by offsets1offset is clearly offsets further into the file but what they point to (and what the values are multiplied by) is not yet know.
+The data pointed to by unk1offset, unk2offset and unk3offset is totally unknown.
