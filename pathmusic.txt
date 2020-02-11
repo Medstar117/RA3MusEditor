@@ -36,30 +36,30 @@ Here is what is known so far about the MPF files.
 They start with this header: (all the fields named "offset" are offsets within the file to other data tables)
 struct mpfheader
 {
-unsigned int magic; //always 0x50464478
-unsigned char version1; //always 5
-unsigned char version2; //always 3
-short field_6;
-int field_8;
-char field_C;
-unsigned char trackcount; //count of how many .mus files this .mpf file references
-char field_E;
-unsigned char pathmusiceventcount; //count of how many events there are in the "events table"
-short field_10;
-short field_12;
-unsigned int offsets1offset;
-unsigned int unk1offset;
-unsigned int eventdataoffsetsoffset;
-unsigned int eventdataoffset;
-unsigned int unk2offset;
-unsigned int unk3offset;
-unsigned int trackdataoffsetsoffset;
-unsigned int trackdataoffset;
-unsigned int tracksegmentsdataoffset;
-unsigned int mpfsize; //matches the size of the .mpf file
-int field_3C;
-int field_40;
-int field_44;
+[0x00] unsigned int magic; //always 0x50464478
+[0x04] unsigned char version1; //always 5
+[0x05] unsigned char version2; //always 3
+[0x06] short field_6;
+[0x08] int field_8;
+[0x0C] char field_C;
+[0x0D] unsigned char trackcount; //count of how many .mus files this .mpf file references
+[0x0E] char field_E;
+[0x0F] unsigned char pathmusiceventcount; //count of how many events there are in the "events table"
+[0x10] short field_10;
+[0x12] short field_12;
+[0x14] unsigned int offsets1offset; // start of some unknown data
+[0x18] unsigned int unk1offset; // end of previous data??
+[0x1C] unsigned int eventdataoffsetsoffset;
+[0x20] unsigned int eventdataoffset; // end of event data table
+[0x24] unsigned int unk2offset; // short-lengthed unknown plaintext
+[0x28] unsigned int unk3offset; // end of previous?
+[0x2C] unsigned int trackdataoffsetsoffset;
+[0x30] unsigned int trackdataoffset;
+[0x34] unsigned int tracksegmentsdataoffset;
+[0x38] unsigned int mpfsize; //matches the size of the .mpf file
+[0x3C] int field_3C;
+[0x40] int field_40;
+[0x44] int field_44;
 };
 
 The data table pointed to by trackdataoffsetsoffset is an array of unsigned ints. These ints get multiplied by 4 and used as an offset into the file to locate the data structure for the track entry (i.e. the .mus file/PathMusicTrack data). This offset will be somewhere inside the table pointed to by the trackdataoffset pointer.
