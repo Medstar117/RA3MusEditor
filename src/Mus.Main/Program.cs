@@ -10,7 +10,18 @@ namespace Mus.Main
 {
     class Program
     {
-        static string Decoder = "files/ealayer3-0.7.0-win32/ealayer3.exe";
+        const string DecoderPath = "files/ealayer3-0.7.0-win32/ealayer3.exe";
+        static string Decoder
+        {
+            get
+            {
+                if(File.Exists(DecoderPath))
+                {
+                    return DecoderPath;
+                }
+                return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, DecoderPath);
+            }
+        }
 
         static void Main(string[] args)
         {
@@ -29,18 +40,25 @@ namespace Mus.Main
         static void Run(string[] args)
         {
 
-            Console.WriteLine("args1 => input path (.xml or .mus), manually backup files before running this tool.");
+            Console.WriteLine("args => input path (.xml or .mus), manually backup files before running this tool.");
             Console.WriteLine("Delete cache file manually if you don't want to use it.");
-            var inputName = args[1];
-            if (Path.GetExtension(inputName).ToLowerInvariant() != ".xml")
+            foreach(var inputName in args)
             {
-                Console.WriteLine($"Serializing \"{inputName}\" to xml...");
-                Serialize(inputName);
-            }
-            else
-            {
-                Console.WriteLine($"Deserializing \"{inputName}\" to mus...");
-                Deserialize(inputName);
+                var extension = Path.GetExtension(inputName).ToLowerInvariant();
+                switch(extension)
+                {
+                    case ".mus":
+                    case ".cdata":
+                        Console.WriteLine($"Serializing \"{inputName}\" to xml...");
+                        Serialize(inputName);
+                        Console.WriteLine($"Successfully serialized \"{inputName}\" to xml");
+                        break;
+                    case ".xml":
+                        Console.WriteLine($"Deserializing \"{inputName}\" to mus...");
+                        Deserialize(inputName);
+                        Console.WriteLine($"Successfully deserialized \"{inputName}\" to mus");
+                        break;
+                }
             }
         }
 

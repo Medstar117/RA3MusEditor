@@ -8,6 +8,7 @@ namespace Mus.Main
 {
     public struct CacheData
     {
+        public bool ForceCache;
         public DateTime LastWriteTimeUtc;
         public long FileSize;
     }
@@ -49,6 +50,7 @@ namespace Mus.Main
             var file = new FileInfo(path);
             Caches[file.FullName] = new CacheData
             {
+                ForceCache = false,
                 LastWriteTimeUtc = file.LastWriteTimeUtc,
                 FileSize = file.Length,
             };
@@ -56,13 +58,18 @@ namespace Mus.Main
 
         public bool IsChanged(string path)
         {
-            if (!File.Exists(path))
+            var file = new FileInfo(path);
+            if (!Caches.TryGetValue(file.FullName, out var data))
             {
                 return true;
             }
 
-            var file = new FileInfo(path);
-            if (!Caches.TryGetValue(file.FullName, out var data))
+            if (data.ForceCache)
+            {
+                return false;
+            }
+
+            if (!file.Exists)
             {
                 return true;
             }
