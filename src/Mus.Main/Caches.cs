@@ -66,6 +66,7 @@ namespace Mus.Main
 
             if (data.ForceCache)
             {
+                Console.WriteLine($"Force using existing EALayer3 File for {path} because ForceCache is set to true");
                 return false;
             }
 
