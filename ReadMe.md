@@ -20,9 +20,9 @@
     ```
 
 本工具（`Mus.Main.exe`）会调用Ben Moench的EALayer3解码/编码器来提取mus文件中的音乐、以及将mus文件里的音乐替换成自定义音乐。但是，可能是由于我调用编码器的姿势不对，生成的音乐并不能被游戏识别（甚至可能导致游戏崩溃），因此实际上只能使用游戏自带的音乐来进行替换，比如把某个EALayer3文件替换成另一个EALayer3文件。
-为了防止我的工具自动把MP3编码成（没有用的）EALayer3文件，你需要在cache.xml里把相应的EALayer3以及MP3的ForceCache设为true，这样我的工具就会使用现成的EALayer3文件，而不是重新从MP3开始编码。
+为了防止这个工具自动把MP3编码成（并不能被游戏识别的）EALayer3文件，你需要在cache.xml里把相应的EALayer3以及MP3的`ForceCache`选项设为`true`，这样`Mus.Main.exe`就会使用现成的EALayer3文件，而不是重新从MP3开始编码。
 
-EALayer3文件的大小必须与XML里的DataSize相吻合，否则我的工具会提示大小不吻合，因此你还需要手动修改XML里相应的DataSize。
+EALayer3文件的大小必须与XML里的DataSize相吻合，因此你还需要手动修改XML里相应的DataSize，否则工具将会报错。
 
 ~~【修改过的mus文件可以像示例里的文件pc_pathmusicassets.xml那样，引用到你的Mod里。】~~ ←由于未知原因这没有用，目前你必须手动替换StaticStream里面的cdata。
 
@@ -32,3 +32,4 @@ EALayer3文件的大小必须与XML里的DataSize相吻合，否则我的工具�
 - 关于RA3 PathMusic的一些信息：https://forum.xentax.com/viewtopic.php?t=14927
 - 关于MPF格式：https://forum.xentax.com/viewtopic.php?t=9841
 
+有任何问题也欢迎在红警3吧（https://tieba.baidu.com/ra3）发帖
