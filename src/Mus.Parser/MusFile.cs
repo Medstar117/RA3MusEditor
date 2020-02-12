@@ -8,7 +8,7 @@ namespace Mus.Parser
 {
     public class MusFile
     {
-        public const int EofPadding = 0x100;
+        public const int EofPadding = 0x80;
         public MusFileHeader Header { get; set; }
         public List<MusFileSegment> Segments { get; set; }
 
@@ -38,7 +38,7 @@ namespace Mus.Parser
             }
             writer.BaseStream.Seek(0, SeekOrigin.End);
             var currentEof = writer.BaseStream.Position;
-            var paddingLeft = EofPadding - (currentEof % EofPadding);
+            var paddingLeft = (EofPadding - (currentEof % EofPadding)) % EofPadding;
             writer.Write(new byte[paddingLeft]);
             if (writer.BaseStream.Position % EofPadding != 0)
             {
