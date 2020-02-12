@@ -11,7 +11,7 @@
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/src/Mus.Main/bin/Debug/netcoreapp3.1/Mus.Main.dll",
-            "args": [],
+            "args": ["${workspaceFolder}/files/track/track.mus"],
             "cwd": "${workspaceFolder}/src/Mus.Main",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",
