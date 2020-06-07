@@ -1,35 +1,38 @@
-# 红警3 Mus 文件修改器
+# Red Alert 3 Mus File Modifier
 
-红警3的音乐看上去是保存在两个文件里的：
+Red Alert 3's music appears to be saved in two files:
 `track-mem.mus`（`data\static\cdata\a70bc1d6.9f12cf33.240021e2.dca9eaab.cdata`）
 `track.mus`（`data\static\cdata\a70bc1d6.9f12cf33.2d97c0ca.6d02956b.cdata`）
 
-游戏通过文件`pc.mpf`控制PathMusic音乐播放。mpf文件的结构尚不清楚，因此目前只能修改mus文件。
+The game controls PathMusic audio playback through the file `pc.mpf`. The structure of the .mpf file is not yet clear, so currently only the .mus files can be modified.
 
-此外附上了Jonwil对Mus文件的研究（主要是`pathmusic.txt`、`mus.cpp`和`mus.exe`），以及Ben Moench的EALayer3解码器（EALayer3是一种类似MP3的编码，EA使用这种编码来储存音乐）可供参考使用。
+In addition, Jonwil's research on Mus files (mainly `pathmusic.txt`, `mus.cpp` and `mus.exe`) and Ben Moench’s ELayer3 decoder (EALayer3 is an MP3-like encoding, EA Use this code to store music) have been included for reference.
 
-## 理论上的使用方法：
-1. 用`Mus.Main.exe`打开任意.mus文件，它会自动把mus文件解析为XML，并提取出所有的MP3文件
+## Theoretical use method:
+1. Open any .mus file with `Mus.Main.exe`; it will automatically parse the .mus file into XML and extract all MP3 files
     ```
     Mus.Main track.mus
     ```
 
-2. ~~【把MP3文件替换成你自己想要使用的音乐后，使用`Mus.Main.exe`打开XML文件，它会自动生成新的mus文件并把所有的MP3文件加进去】~~ ←实际上不一定有用，见下文
+2. ~~【After replacing the MP3 file with the music you want, use `Mus.Main.exe` to open the XML file; it will automatically generate a new .mus file and add all the MP3 files you added into it】~~ ←Actually not very useful, see below
     ```
     Mus.Main track.xml
     ```
 
-本工具（`Mus.Main.exe`）会调用Ben Moench的EALayer3解码/编码器来提取mus文件中的音乐、以及将mus文件里的音乐替换成自定义音乐。但是，可能是由于我调用编码器的姿势不对，生成的音乐并不能被游戏识别（甚至可能导致游戏崩溃），因此实际上只能使用游戏自带的音乐来进行替换，比如把某个EALayer3文件替换成另一个EALayer3文件。
-为了防止这个工具自动把MP3编码成（并不能被游戏识别的）EALayer3文件，你需要在cache.xml里把相应的EALayer3以及MP3的`ForceCache`选项设为`true`，这样`Mus.Main.exe`就会使用现成的EALayer3文件，而不是重新从MP3开始编码。
+This tool (`Mus.Main.exe`) will call Ben Moench's EALayer3 decoder/encoder to extract the music in the .mus file and replace the extracted music with one's own custom music. However, due to some unknown encoding error, the generated music cannot be recognized by the game (it may even cause the game to crash); with this in mind, it is currently only possible to replace pieces of music with tracks that came with the game.
 
-EALayer3文件的大小必须与XML里的DataSize相吻合，因此你还需要手动修改XML里相应的DataSize，否则工具将会报错。
+TL;DR: You can only replace extracted EALayer3 files with other extracted EALayer3 files from the game. The EALayer3 files that you generate from MP3 files using Ben Moench's tool cannot be read by the game.
 
-~~【修改过的mus文件可以像示例里的文件pc_pathmusicassets.xml那样，引用到你的Mod里。】~~ ←由于未知原因这没有用，目前你必须手动替换StaticStream里面的cdata。
+In order to prevent this tool from automatically encoding MP3 into an EALayer3 file (the faulty process explained above), you need to set the corresponding EALayer3 and MP3 `ForceCache` option to `true` in cache.xml, so that `Mus.Main.exe` will use the ready-made EALayer3 file instead of re-encoding from MP3.
 
-相关链接：
-- EALayer3解码编码器（mus文件里的音乐使用EALayer3编码） https://forum.xentax.com/viewtopic.php?t=4922
-- EALayer3格式（已知mus文件里的音乐是以“Headerless Streamed Chunk”格式存储的）：https://wiki.multimedia.cx/index.php/EA_SAGE_Audio_Files
-- 关于RA3 PathMusic的一些信息：https://forum.xentax.com/viewtopic.php?t=14927
-- 关于MPF格式：https://forum.xentax.com/viewtopic.php?t=9841
+The size of the EALayer3 file __must__ match the DataSize in the XML; you need to manually modify the corresponding DataSize section in the XML, or the tool will report an error.
 
-有任何问题也欢迎在红警3吧（https://tieba.baidu.com/ra3）发帖
+~~【The modified .mus file can then be referenced in your mod, like how you would with the pc_pathmusicassets.xml file in the example.】~~ ←This is useless for unknown reasons. At present, you must manually replace the cdata in StaticStream.
+
+Related Links:
+- EALayer3 decoder/encoder（music in .mus files are encoded with EALayer3） https://forum.xentax.com/viewtopic.php?t=4922
+- EALayer3 format（music in .mus files are known to be stored as “Headerless Streamed Chunks”）：https://wiki.multimedia.cx/index.php/EA_SAGE_Audio_Files
+- Some information about RA3's PathMusic：https://forum.xentax.com/viewtopic.php?t=14927
+- Information about the .MPF format：https://forum.xentax.com/viewtopic.php?t=9841
+
+If you have any questions, please ask them at this Red Alert 3 post（https://tieba.baidu.com/ra3）
